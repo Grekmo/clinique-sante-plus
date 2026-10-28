@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
+//use Illuminate\Support\Facades\Redirect;
 
 class EmployeeController extends Controller
 {
@@ -16,7 +19,7 @@ class EmployeeController extends Controller
     public function index():View
     {
         $employees = Employee::all();
-        return view('employees.index')->with('employees',$employees);
+        return view('employees.index', compact('employees'));
     }
 
     /**
@@ -24,28 +27,52 @@ class EmployeeController extends Controller
      */
     public function create():View
     {
-        abort_if(!auth()->user()->role === 'admin', 403);
+        //abort_if(!auth()->user()->role === 'admin', 403);
         return view('employees.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request):RedirectResponse
+
+    public function store(Request $request)
     {
-        abort_if(!auth()->user()->role === 'admin', 403);
         $request->validate([
-            'nom' => 'required',
-            'prenom' => 'required',
-            'cin' => 'required|unique:employees',
-            'adresse' => 'required',
-            'mobile' => 'required',
-            'email' => 'required|email|unique:employees',
+            'nom'            => 'required|string|max:255',
+            'prenom'         => 'required|string|max:255',
+            'cin'            => 'required|unique:employees',
+            'adresse'        => 'required',
+            'mobile'         => 'required',
+            'email'          => 'required|email|unique:users,email', 
+            'password'       => 'required|min:6', 
             'date_naissance' => 'required|date',
         ]);
 
-        Employee::create($request->all());
-        return redirect()->route('employees.index')->with('Success','Employee added successfully');
+        DB::transaction(function () use ($request) {
+            
+            $fullName = $request->nom . ' ' . $request->prenom;
+
+            $user = User::create([
+                'name'     => $fullName, 
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+                'role'     => 'employee',
+            ]);
+
+            Employee::create([
+                'user_id'        => $user->id,
+                'nom'            => $request->nom,
+                'prenom'         => $request->prenom, 
+                'cin'            => $request->cin,
+                'adresse'        => $request->adresse,
+                'mobile'         => $request->mobile,
+                'email'          => $request->email,
+                'date_naissance' => $request->date_naissance,
+                'telephone'      => $request->mobile,
+            ]);
+        });
+
+        return redirect()->route('employees.index')->with('success', 'Employee Created Successfully');
     }
 
     /**
@@ -61,8 +88,9 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee):View
     {
-        abort_if(!auth()->user()->role === 'admin', 403);
-        return view('employees.edit')->with('employees',$employee);
+        abort_if(auth()->user()->role !== 'admin', 403);
+        return view('employees.edit', compact('employee'));
+        //return view('employees.edit')->with('employees', $employee);
     }
 
     /**
@@ -70,9 +98,8 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, Employee $employee):RedirectResponse
     {
-        abort_if(!auth()->user()->role === 'admin', 403);
+        //abort_if(!auth()->user()->role === 'admin', 403);
         $request->validate([
-
             'nom' => 'required',
             'prenom' => 'required',
             'cin' => 'required|unique:employees,cin,'.$employee->id,
@@ -91,7 +118,9 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee):RedirectResponse
     {
-        abort_if(!auth()->user()->role === 'admin', 403);
+        //abort_if(auth()->user()->role !== 'admin', 403);
+        //if (auth()->user()->role !== 'admin') {
+        //    abort(403, 'Unauthorized action.');}
         $employee->delete();
         return redirect()->route('employees.index')->with('success','Employee Deleted Successfully');
     }

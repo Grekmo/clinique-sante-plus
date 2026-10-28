@@ -9,7 +9,6 @@ class Patient extends Model
 {
     use HasFactory;
 
-    // الحقول اللي نسمح بالكتابة فيها (mass assignable)
     protected $fillable = [
         'nom',
         'prenom',
@@ -19,9 +18,24 @@ class Patient extends Model
         'mobile',
     ];
 
-    // إذا بغيتي Laravel تعالج 'date_naissance' كتاريخ (Carbon instance)
     protected $casts = [
         'date_naissance' => 'date',
     ];
 
+    public function invoices() {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function appointments() {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function doctors() {
+        return $this->belongsToMany(Doctor::class, 'appointments');
+    }
+
+    public function consultations()
+    {
+        return $this->hasMany(Consultation::class);
+    }
 }

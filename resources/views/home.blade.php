@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- إذا عندك layout --}}
+@extends('layouts.app') 
 @section('content')
 <div  style="background-color: #d2e0f5; min-height: 100vh; padding: 50px 0;" class="container mt-5 text-center">
     <h1>Welcome to the Clinic Management System</h1>

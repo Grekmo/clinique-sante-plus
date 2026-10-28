@@ -7,23 +7,20 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    // عرض جميع المرضى
     public function index()
     {
         //$patients = Patient::latest()->paginate(10); 
 
-        $patients = Patient::orderBy('id', 'asc')->paginate(10);
+        $patients = Patient::with(['consultations','doctors'])->orderBy('id', 'asc')->paginate(10);
 
         return view('patients.index', compact('patients'));
     }
 
-    // عرض صفحة إنشاء مريض جديد
     public function create()
     {
         return view('patients.create');
     }
 
-    // حفظ مريض جديد
     public function store(Request $request)
     {
         $validated = $request->validate([

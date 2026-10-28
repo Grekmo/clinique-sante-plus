@@ -10,6 +10,6 @@ class PatientSeeder extends Seeder
     public function run()
     {
         // يعمر 20 مريض عشوائي
-        Patient::factory(20)->create();
+        Patient::factory()->count(20)->create();
     }
 }

@@ -40,20 +40,20 @@ class AppointmentController extends Controller
         $appointment->patient_id = $request->patient_id;
         $appointment->doctor_id = $request->doctor_id;
         $appointment->date_time = $dateTime;
-        $appointment->status = 'scheduled';
+        $appointment->status = 'planifier'; // Default status
         $appointment->notes = $request->notes;
         $appointment->save();
 
-        return redirect()->route('appointments.index')->with('success', 'تمت إضافة الموعد بنجاح');
+        return redirect()->route('appointments.index')->with('success', 'Added successfully');
     }
 
-    public function show($id)
+    public function show(string $id)
     {
         $appointment = Appointment::with(['patient', 'doctor'])->findOrFail($id);
         return view('appointments.show', compact('appointment'));
     }
 
-    public function edit($id)
+    public function edit(string $id)
     {
         $appointment = Appointment::findOrFail($id);
         $patients = Patient::all();
@@ -61,12 +61,13 @@ class AppointmentController extends Controller
         return view('appointments.edit', compact('appointment', 'patients', 'doctors'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
         $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'doctor_id' => 'required|exists:doctors,id',
             'appointment_date' => 'required|date',
+            'status' => 'required|in:planifier,annuler,terminer',
             'notes' => 'nullable|string',
         ]);
 
@@ -83,10 +84,10 @@ class AppointmentController extends Controller
         $appointment->notes = $request->notes;
         $appointment->save();
 
-        return redirect()->route('appointments.index')->with('success', 'تم تعديل الموعد بنجاح');
+        return redirect()->route('appointments.index')->with('success');
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $appointment = Appointment::findOrFail($id);
         $appointment->delete();

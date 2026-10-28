@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
+use App\Models\Doctor;
 use App\Models\Invoice;
 use App\Models\Patient;
-use App\Models\Appointment;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -42,20 +43,21 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.index')->with('success', 'تمت إضافة الفاتورة بنجاح');
     }
 
-    public function show($id)
+    public function show(string $id)
     {
         $invoice = Invoice::with(['patient','doctor'])->findOrFail($id);
         return view('invoices.show', compact('invoice'));
     }
 
-    public function edit($id)
+    public function edit(string $id)
     {
         $invoice = Invoice::findOrFail($id);
         $patients = Patient::all();
-        return view('invoices.edit', compact('invoice', 'patients'));
+        $doctors = Doctor::all();
+        return view('invoices.edit', compact('invoice', 'patients', 'doctors'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
         $request->validate([
             'amount' => 'required|numeric',
@@ -70,7 +72,7 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.index')->with('success', 'تم تعديل الفاتورة بنجاح');
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $invoice = Invoice::findOrFail($id);
         $invoice->delete();

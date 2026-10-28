@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nom');
             $table->string('prenom');
             $table->string('cin')->unique();
-            $table->date('date_naissance')->nullable();  // تاريخ الولادة
+            $table->date('date_naissance')->nullable();  
             $table->string('mobile')->nullable();
             $table->string('adresse');
             $table->timestamps();

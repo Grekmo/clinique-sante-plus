@@ -23,8 +23,23 @@ class Doctor extends Model
         'date_naissance' => 'date',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    
     public function speciality()
     {
         return $this->belongsTo(Speciality::class);
+    }
+    public function appointments() {
+        return $this->hasMany(Appointment::class,);
+    }
+    public function patients() {
+        return $this->belongsToMany(Patient::class, 'appointments');
+    }
+    public function consultations() 
+    {
+        return $this->hasMany(Consultation::class);
     }
 }

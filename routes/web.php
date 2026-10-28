@@ -33,8 +33,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 // Admin-only resources
 Route::middleware(['auth','role:admin'])->group(function () {
-    Route::resource('doctors', DoctorController::class);
-    Route::resource('employees', EmployeeController::class);
+    Route::resource('doctors', DoctorController::class)->except(['index', 'show']);
+    Route::resource('employees', EmployeeController::class)->except(['index', 'show']);
 });
 
 // Shared resources: admin and employee can full CRUD
@@ -47,11 +47,16 @@ Route::middleware(['auth','role:admin,employee'])->group(function () {
 });
 
 // Authenticated profile routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
+    // صفحة البروفايل (عرض)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-}); 
+    
+    // تحديث المعلومات الشخصية (Name & Email)
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
+    // تحديث كلمة المرور
+    Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
+});
 
 require __DIR__.'/auth.php';
 

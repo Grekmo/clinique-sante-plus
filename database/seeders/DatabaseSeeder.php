@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\Doctor;
+//use App\Models\Doctor;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             SpecialitySeeder::class,
             DoctorSeeder::class,
             PatientSeeder::class,
+            EmployeeSeeder::class,
             
             // أي Seeder آخر إذا عندك
         ]);

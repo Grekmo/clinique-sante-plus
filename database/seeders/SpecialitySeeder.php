@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+//use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SpecialitySeeder extends Seeder
@@ -14,7 +14,14 @@ class SpecialitySeeder extends Seeder
     public function run():void
     {
         $specialities = [
-            'Dentiste',
+            'Cardiologie',
+            'Dermatologie',
+            'Pédiatrie',
+            'Ophtalmologie',
+            'Gynécologie',
+            'Neurologie',
+            'Dentisterie',
+            /*'Dentiste',
             'Médecin généraliste',
             'Ophtalmologiste',
             'Pédiatre',
@@ -31,7 +38,7 @@ class SpecialitySeeder extends Seeder
             'Rhumatologue',
             'Endocrinologue',
             'Urologue',
-            'Pneumologue',
+            'Pneumologue',*/
         ];
 
         foreach ($specialities as $spec) {
